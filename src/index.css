@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Montserrat:wght@100;200;300;400;500;600&family=JetBrains+Mono:wght@100;200;300;400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Montserrat", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-gold-50: #FAF6F0;
+  --color-gold-100: #F3E9DA;
+  --color-gold-200: #E6D0B5;
+  --color-gold-300: #D3B087;
+  --color-gold-400: #BD8E5B;
+  --color-gold-500: #A57341;
+  --color-gold-600: #885B31;
+  --color-gold-700: #6B4524;
+  --color-gold-800: #4F3119;
+  --color-gold-900: #321E0F;
+  
+  --color-bronze-50: #FCFAF7;
+  --color-bronze-100: #F7F1EA;
+  --color-bronze-200: #EDE0CE;
+  --color-bronze-300: #DFCBAF;
+  --color-bronze-400: #CBAE89;
+  --color-bronze-500: #B28E61;
+  --color-bronze-600: #937046;
+  --color-bronze-700: #735432;
+  --color-bronze-800: #533C21;
+  --color-bronze-900: #352513;
+}
+
+/* Custom fade effects and smooth behaviors */
+html {
+  scroll-behavior: auto;
+  background-color: #0B0A09; /* Matches the dark luxury look in the screenshot */
+  color: #F7F1EA;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+.site-main {
+  position: relative;
+  isolation: isolate;
+  perspective: 1500px;
+}
+
+.site-depth-haze {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.45;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(189, 142, 91, 0.16), transparent 30%),
+    radial-gradient(circle at 84% 42%, rgba(230, 208, 181, 0.1), transparent 26%),
+    linear-gradient(120deg, transparent 10%, rgba(165, 115, 65, 0.08), transparent 72%);
+}
+
+#section-transition-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  pointer-events: none;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  mix-blend-mode: screen;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(189, 142, 91, 0.04) 24%,
+    rgba(230, 208, 181, 0.18) 48%,
+    rgba(189, 142, 91, 0.04) 72%,
+    transparent
+  );
+}
+
+[data-section-content],
+[data-depth-card],
+[data-parallax-media] {
+  will-change: transform, opacity;
+}
+
+[data-section-content],
+[data-depth-card] {
+  transform-style: preserve-3d;
+}
+
+[data-depth-card]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 500ms ease;
+  background:
+    linear-gradient(115deg, transparent 20%, rgba(246, 230, 203, 0.13) 48%, transparent 72%),
+    radial-gradient(circle at 50% 0%, rgba(189, 142, 91, 0.16), transparent 42%);
+}
+
+[data-depth-card]:hover::after {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-depth-haze,
+  #section-transition-veil {
+    display: none;
+  }
+
+  [data-section-content],
+  [data-depth-card],
+  [data-parallax-media] {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+::selection {
+  background-color: var(--color-gold-500);
+  color: #0B0A09;
+}
+
+/* Hide scrollbars for aesthetic flow if required, or keep elegant slim scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0B0A09;
+}
+::-webkit-scrollbar-thumb {
+  background: #321E0F;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A57341;
+}
