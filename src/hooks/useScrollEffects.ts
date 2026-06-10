@@ -29,7 +29,46 @@ export function useScrollEffects(enabled: boolean) {
 
     const offLenisScroll = lenis.on('scroll', ScrollTrigger.update);
     const resizeLenis = () => lenis.resize();
+    const imageLoadCleanups: Array<() => void> = [];
+    const refreshTimers: number[] = [];
+    let refreshFrame = 0;
+
+    const refreshSoon = () => {
+      if (refreshFrame) cancelAnimationFrame(refreshFrame);
+      refreshFrame = requestAnimationFrame(() => {
+        refreshFrame = requestAnimationFrame(() => {
+          refreshFrame = 0;
+          ScrollTrigger.refresh();
+        });
+      });
+    };
+
+    const watchImages = () => {
+      const images = Array.from(document.querySelectorAll<HTMLImageElement>('main img'));
+
+      images.forEach((image) => {
+        if (image.complete) return;
+
+        const onSettled = () => refreshSoon();
+        image.addEventListener('load', onSettled, { once: true });
+        image.addEventListener('error', onSettled, { once: true });
+        imageLoadCleanups.push(() => {
+          image.removeEventListener('load', onSettled);
+          image.removeEventListener('error', onSettled);
+        });
+      });
+    };
+
+    const cleanupRefreshGuards = () => {
+      window.removeEventListener('load', refreshSoon);
+      imageLoadCleanups.forEach((cleanup) => cleanup());
+      refreshTimers.forEach((timer) => window.clearTimeout(timer));
+      if (refreshFrame) cancelAnimationFrame(refreshFrame);
+    };
+
     ScrollTrigger.addEventListener('refresh', resizeLenis);
+    window.addEventListener('load', refreshSoon);
+    watchImages();
 
     const tick = (time: number) => {
       lenis.raf(time * 1000);
@@ -39,9 +78,10 @@ export function useScrollEffects(enabled: boolean) {
     gsap.ticker.lagSmoothing(0);
 
     if (prefersReducedMotion) {
-      ScrollTrigger.refresh();
+      refreshSoon();
 
       return () => {
+        cleanupRefreshGuards();
         ScrollTrigger.removeEventListener('refresh', resizeLenis);
         offLenisScroll();
         gsap.ticker.remove(tick);
@@ -205,12 +245,12 @@ export function useScrollEffects(enabled: boolean) {
       });
     });
 
-    const refresh = () => ScrollTrigger.refresh();
-    window.addEventListener('load', refresh);
-    ScrollTrigger.refresh();
+    refreshSoon();
+    refreshTimers.push(window.setTimeout(refreshSoon, 250));
+    refreshTimers.push(window.setTimeout(refreshSoon, 900));
 
     return () => {
-      window.removeEventListener('load', refresh);
+      cleanupRefreshGuards();
       ScrollTrigger.removeEventListener('refresh', resizeLenis);
       offLenisScroll();
       ctx.revert();
