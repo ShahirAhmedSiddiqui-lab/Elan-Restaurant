@@ -1,6 +1,6 @@
 {
-  "name": "ÉLAN",
+  "name": "Elan Restaurant",
   "description": "An immersive fine dining sensory experience with interactive menu showcases, reservations, and luxury ambience.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }
